@@ -1,9 +1,5 @@
 # Forcex
 
-[![Build Status](https://travis-ci.org/jeffweiss/forcex.svg?branch=master)](https://travis-ci.org/jeffweiss/forcex)
-[![Hex.pm Version](http://img.shields.io/hexpm/v/forcex.svg?style=flat)](https://hex.pm/packages/forcex)
-[![Coverage Status](https://coveralls.io/repos/github/jeffweiss/forcex/badge.svg?branch=master)](https://coveralls.io/github/jeffweiss/forcex?branch=master)
-
 Elixir library for interacting with the Force.com REST API.
 
 ## Usage
@@ -46,23 +42,7 @@ compilers: [:forcex] ++ Mix.compilers,
 
 ## Bulk API Usage
 
-Forcex has an example Bulk API query job controller. Here's roughly how that can
-work.
-
-```elixir
-client = Forcex.Bulk.Client.login
-[
-  "Account",
-  "Campaign",
-  "Contact",
-  "Lead",
-  "Opportunity",
-  "OpportunityLineItem",
-]
-|> Enum.map(fn sobject -> {sobject, ["select Id, Name from #{sobject}"]} end)
-|> Enum.map(fn {sobject, queries} ->
-Forcex.Bulk.JobController.start_link({:query, sobject, queries, client}) end)
-```
+Removed Bulk API support since we (Tapjoy) don't use Bulk API. 
 
 ## Configuration
 

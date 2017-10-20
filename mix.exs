@@ -43,7 +43,7 @@ defmodule Forcex.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :httpoison, :erlsom, :exjsx, :ssl]]
+    [applications: [:logger, :httpoison, :ssl]]
   end
 
   # Dependencies can be Hex packages:
@@ -58,10 +58,8 @@ defmodule Forcex.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.8"},
-      {:exjsx, "~> 3.1"},
       {:poison, "~> 2.2"},
       {:timex, "~> 2.0 or ~> 3.0"},
-      {:erlsom, "~> 1.4"},
       {:excoveralls, "~> 0.5", only: :test},
       {:ex_doc, "~> 0.11", only: :dev},
       {:earmark, "~> 1.1", only: :dev, override: true},
