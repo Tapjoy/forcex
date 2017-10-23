@@ -87,12 +87,12 @@ defmodule Forcex do
   end
 
   @basic_services [
-    limits: :limits,
-    describe_global: :sobjects,
-    quick_actions: :quickActions,
-    recently_viewed_items: :recent,
-    tabs: :tabs,
-    theme: :theme,
+    limits: "limits",
+    describe_global: "sobjects",
+    quick_actions: "quickActions",
+    recently_viewed_items: "recent",
+    tabs: "tabs",
+    theme: "theme",
   ]
 
   for {function, service} <- @basic_services do
@@ -106,7 +106,7 @@ defmodule Forcex do
 
   @spec describe_sobject(String.t, client) :: response
   def describe_sobject(sobject, %Forcex.Client{} = client) do
-    base = service_endpoint(client, :sobjects)
+    base = service_endpoint(client, "sobjects")
 
     "#{base}/#{sobject}/describe/"
     |> get(client)
@@ -121,7 +121,7 @@ defmodule Forcex do
 
   @spec metadata_changes_since(String.t, String.t, client) :: response
   def metadata_changes_since(sobject, since, client) do
-    base = service_endpoint(client, :sobjects)
+    base = service_endpoint(client, "sobjects")
 
     "#{base}/#{sobject}/describe/"
     |> get("", [{"If-Modified-Since", since}], client)
@@ -129,7 +129,7 @@ defmodule Forcex do
 
   @spec query(String.t, client) :: response
   def query(query, %Forcex.Client{} = client) do
-    base = service_endpoint(client, :query)
+    base = service_endpoint(client, "query")
     params = %{"q" => query} |> URI.encode_query
 
     "#{base}/?#{params}"
@@ -138,7 +138,7 @@ defmodule Forcex do
 
   @spec query_all(String.t, client) :: response
   def query_all(query, %Forcex.Client{} = client) do
-    base = service_endpoint(client, :queryAll)
+    base = service_endpoint(client, "queryAll")
     params = %{"q" => query} |> URI.encode_query
 
     "#{base}/?#{params}"
