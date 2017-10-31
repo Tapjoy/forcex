@@ -3,7 +3,8 @@ defmodule Forcex do
   require Logger
 
   @user_agent [{"User-agent", "forcex"}]
-  @accept [{"Accept", "application/json"}]
+  @application_json "application/json"
+  @accept [{"Accept", @application_json}]
   @accept_encoding [{"Accept-Encoding", "gzip,deflate"}]
 
   @type client :: map
@@ -30,7 +31,7 @@ defmodule Forcex do
     %{resp | body: uncompressed_data, headers: Map.drop(headers, ["Content-Encoding"])}
     |> process_response
   end
-  def process_response(%HTTPoison.Response{body: body, headers: %{"Content-Type" => "application/json" <> _} = headers} = resp) do
+  def process_response(%HTTPoison.Response{body: body, headers: %{"Content-Type" => @application_json <> _} = headers} = resp) do
     %{resp | body: Poison.decode!(body), headers: Map.drop(headers, ["Content-Type"])}
     |> process_response
   end
@@ -44,7 +45,7 @@ defmodule Forcex do
 
   @spec json_request(method, String.t, map | String.t, list, list) :: response
   def json_request(method, url, body, headers, options) do
-    raw_request(method, url, Poison.encode!(body), headers, options)
+    raw_request(method, url, Poison.encode!(body), [{"Content-Type", @application_json}] ++ headers, options)
   end
 
   @spec raw_request(method, String.t, map | String.t, list, list) :: response
@@ -144,6 +145,37 @@ defmodule Forcex do
     "#{base}/?#{params}"
     |> get(client)
   end
+
+  @spec create_sobject(String.t, map, client) :: response
+  def create_sobject(sobject, data, %Forcex.Client{} = client) do
+    base = service_endpoint(client, "sobjects")
+    "#{base}/#{sobject}/"
+    |> post(data, client)
+  end
+
+  @spec retrieve_sobject(String.t, String.t, map, client) :: response
+  def retrieve_sobject(sobject, id, params, %Forcex.Client{} = client) do
+    base = service_endpoint(client, "sobjects")
+    params = params |> URI.encode_query
+
+    "#{base}/#{sobject}/#{id}?#{params}"
+    |> get(client)
+  end
+
+  @spec update_sobject(String.t, String.t, map, client) :: response
+  def update_sobject(sobject, id, data, %Forcex.Client{} = client) do
+    base = service_endpoint(client, "sobjects")
+    "#{base}/#{sobject}/#{id}"
+    |> patch(data, client)
+  end
+
+  @spec delete_sobject(String.t, String.t, client) :: response
+  def delete_sobject(sobject, id, %Forcex.Client{} = client) do
+    base = service_endpoint(client, "sobjects")
+    "#{base}/#{sobject}/#{id}"
+    |> delete(client)
+  end
+
 
   @spec service_endpoint(client, String.t) :: String.t
   defp service_endpoint(%Forcex.Client{services: services}, service) do
