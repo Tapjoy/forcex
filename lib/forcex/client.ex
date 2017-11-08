@@ -51,7 +51,7 @@ defmodule Forcex.Client do
   def login(conf, starting_struct) do
     login_payload =
       conf
-      |> Map.put(:password, "#{conf.password}#{conf.security_token}")
+      |> Map.put(:password, get_password(conf))
       |> Map.put(:grant_type, "password")
     Forcex.post("/services/oauth2/token?#{URI.encode_query(login_payload)}", starting_struct)
     |> handle_login_response
@@ -60,6 +60,14 @@ defmodule Forcex.Client do
   def locate_services(client) do
     services = Forcex.services(client)
     %{client | services: services}
+  end
+
+  defp get_password(%{password: password, security_token: security_token}) do
+    if is_binary(security_token) and is_binary(password) and String.ends_with?(password, security_token) do
+      password
+    else
+      "#{password}#{security_token}"
+    end
   end
 
   defp handle_login_response(%{"access_token" => token, "token_type" => token_type, "instance_url" => endpoint}) do
