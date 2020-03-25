@@ -45,7 +45,7 @@ defmodule Forcex do
 
   @spec json_request(method, String.t, map | String.t, list, list) :: response
   def json_request(method, url, body, headers, options) do
-    raw_request(method, url, Poison.encode!(body), [{"Content-Type", @application_json}] ++ headers, options)
+    raw_request(method, url, format_body(body), [{"Content-Type", @application_json}] ++ headers, options)
   end
 
   @spec raw_request(method, String.t, map | String.t, list, list) :: response
@@ -187,4 +187,7 @@ defmodule Forcex do
   defp authorization_header(%{access_token: token, token_type: type}) do
     [{"Authorization", type <> " " <> token}]
   end
+
+  defp format_body(""), do: ""
+  defp format_body(body), do: Poison.encode!(body)
 end
